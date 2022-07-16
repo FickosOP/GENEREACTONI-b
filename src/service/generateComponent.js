@@ -112,6 +112,7 @@ function generateComponentContent(req, res, next){ //path and component -> call 
         console.log(err);
     });
 
+    res.status(201).send('Generated KURAC');
     next();
 }
 
