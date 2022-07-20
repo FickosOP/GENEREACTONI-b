@@ -1,14 +1,19 @@
-const express = require('express');
-const app = express();
+// const express = require('express');
+// const app = express();
 
-app.use(express.json());
+// app.use(express.json());
 
-const {MongoClient} = require('mongodb');
+// const {MongoClient} = require('mongodb');
 
-const uri = "mongodb://localhost:27017";
+// const uri = "mongodb://localhost:27017";
 
-const client = new MongoClient(uri);
+// const client = new MongoClient(uri);
 
-client.connect();
+// client.connect();
 
-module.exports = {app, client};
+// module.exports = {app, client};
+
+const DB_URI = "mongodb://localhost:27017";
+const PORT = process.env.port || 3000;
+
+module.exports = { DB_URI, PORT };

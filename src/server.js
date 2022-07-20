@@ -1,32 +1,22 @@
-// const express = require('express');
-// const app = express();
+const express = require('express');
 
-const generateComponentContent = require('./service/generateComponent');
-const generateProject = require('./service/generateProject');
+const app = express();
+app.use(express.json());
 
-const fs = require('fs');
-const { nextTick } = require('process');
+const userRouter = require('./routes/users.route');
+const modelRouter = require('./routes/model.route');
 
-// app.use(express.json());
-const app = require('./config').app;
-const client = require('./config').client;
+app.use('/users', userRouter);
+app.use('/model', modelRouter);
 
-app.get('/', (req, res) => {
-    const user = {username: "Fickos", password: "Fickos123", projects: [{name: "project1", description: "p1"}, {name: "project2", description: "p2"}]};
-    const result = client.db('genereactoni').collection('users').insertOne(user);
-    console.log(result);
-    res.send(`Successful request`);
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  console.error(err.message, err.stack);
+  res.status(statusCode).json({'message': err.message});
+  
+  return;
 });
 
+const config = require('./config');
 
-app.post('/component', generateComponentContent, (req, res) => {
-    
-    return res.send();
-});
-
-app.post('/project', generateProject, (req, res) => {
-    
-    return res.status(200).send('OK');
-});
-
-app.listen(3000, console.log('Listening on port 3000...'));
+app.listen(config.PORT, console.log('Listening on port 3000...'));

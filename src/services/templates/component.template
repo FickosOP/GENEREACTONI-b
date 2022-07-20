@@ -1,0 +1,27 @@
+import { useState, useEffect } from "react";
+
+function {{name}}(){
+
+    {% for state in states %}
+    const [{{state.name}}, set{{state.name | capitalize}}] = useState({{state.default}});
+    {% endfor %}
+    {% if effects.length > 0 %}
+    useEffect(() => {
+        {% for effect in effects %}
+            {{effect}}();
+        {% endfor %}
+    }, []);
+    {% endif %}
+
+    {% for action in actions %}
+    {{action}}(){
+        //YOUR CODE GOES HERE
+    }
+    {% endfor %}
+
+    return(
+        {{return}}
+    );
+}
+
+export default {{name}};
