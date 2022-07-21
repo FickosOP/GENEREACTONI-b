@@ -10,8 +10,18 @@ async function save(req, res, next){
 }
 
 async function generateComponent(req, res, next){
-    modelService.generateComponent(req.body);
-    res.status(200).send("Generated component!");
+    const success = await modelService.generateComponent(req.body, "../newfolder/components");
+    if(success)
+        res.status(200).send("Generated component!");
+    else
+        res.status(400).send();
 }
 
-module.exports = { getAllForUser, save, generateComponent };
+async function generateProject(req, res, next){
+    console.log("ZAHTEV ZA GENERISANJE PROJEKTA");
+    const success = await modelService.generateProject(req.body.model, req.body);
+    console.log(success);
+    res.status(200).send("generated");
+}
+
+module.exports = { getAllForUser, save, generateComponent, generateProject };

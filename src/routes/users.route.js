@@ -9,6 +9,8 @@ router.get('/', userController.getAll);
 
 router.post('/', userController.save);
 
+router.post('/login', userController.login);
+
 // router.put('/:id');
 
 // router.delete('/:id');

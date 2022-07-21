@@ -1,0 +1,5 @@
+{% for util in utils %}
+export function {{util}}(){
+    //IMPLEMENT THIS FUNCTION;
+}
+{% endfor %}

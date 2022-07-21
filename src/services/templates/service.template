@@ -1,0 +1,8 @@
+import axios from "axios";
+import { API_URL } from "../config";
+
+{% for service in services %}
+export function {{service}}(){
+    //IMPLEMENT THIS SERVICE FUNCTION;
+}
+{% endfor %}

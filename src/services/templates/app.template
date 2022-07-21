@@ -1,0 +1,18 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+{% for page in pages %}
+import { {{page}} } from './pages/{{page}}';
+{% endfor %}
+
+function App(){
+    return(
+        <Router>
+            <Routes>
+                {% for page in pages %}
+                <Route exact path="/{{page}}" element={<{{page}} /> />
+                {% endfor %}
+            </Routes>
+        </Router>
+    );
+}
+
+export default App;

@@ -4,15 +4,18 @@ const collectionName = "users";
 const userRepository = require('../repositories/repository');
 
 async function getAll(){
-    const allUsers = await userRepository.getAll(collectionName);
-    console.log("SVI" + allUsers);
-    return allUsers;
+    return await userRepository.getAll(collectionName);
 }
 
 async function save(user){
-    const saved = await userRepository.save(collectionName, user);
-    console.log(saved);
-    return saved;
+    return await userRepository.save(collectionName, user);
 }
 
-module.exports = { getAll, save };
+async function login(loginDto){
+    const user = await userRepository.getOneByUsername(collectionName, loginDto.username);
+    if(user.password != loginDto.password)
+        return;
+    return user;
+}
+
+module.exports = { getAll, save, login };
