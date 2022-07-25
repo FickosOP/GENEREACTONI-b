@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 {% for page in pages %}
-import { {{page}} } from './pages/{{page}}';
+import {{page.name}} from './pages/{{page.name}}';
 {% endfor %}
 
 function App(){
@@ -8,7 +8,7 @@ function App(){
         <Router>
             <Routes>
                 {% for page in pages %}
-                <Route exact path="/{{page}}" element={<{{page}} /> />
+                <Route exact path="/{{page.name}}" element={<{{page.name}} /> }/>
                 {% endfor %}
             </Routes>
         </Router>

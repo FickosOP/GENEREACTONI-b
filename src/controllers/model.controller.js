@@ -18,7 +18,6 @@ async function generateComponent(req, res, next){
 }
 
 async function generateProject(req, res, next){
-    console.log("ZAHTEV ZA GENERISANJE PROJEKTA");
     const success = await modelService.generateProject(req.body.model, req.body.structure);
     console.log(success);
     res.status(200).send("generated");
