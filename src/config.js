@@ -3,4 +3,4 @@ const DB_NAME = "genereactoni";
 
 const PORT = process.env.port || 3000;
 
-module.exports = { DB_URI, PORT };
+module.exports = { DB_URI, DB_NAME, PORT };

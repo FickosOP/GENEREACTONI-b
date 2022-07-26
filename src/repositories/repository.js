@@ -1,13 +1,12 @@
 const { MongoClient } = require('mongodb');
-const { DB_URI } = require('../config');
+const { DB_URI, DB_NAME } = require('../config');
 
 const client = new MongoClient(DB_URI);
 
 client.connect();
 
-const database = client.db('genereactoni');
+const database = client.db(DB_NAME);
 
-//genereactoni da se cita iz configa
 async function save(coll, obj){
     return await database.collection(coll).insertOne(obj);
 }
