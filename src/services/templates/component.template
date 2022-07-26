@@ -1,4 +1,10 @@
 import { useState, useEffect } from "react";
+{% for effect in effects %}
+import { {{effect.name}} } from '{{effect.relativePath}}';
+{% endfor %}
+{% for child in children %}
+import {{child.name}} from '{{child.relativePath}}{{child.name}}';
+{% endfor %}
 
 function {{name}}(){
 
@@ -8,13 +14,13 @@ function {{name}}(){
     {% if effects.length > 0 %}
     useEffect(() => {
         {% for effect in effects %}
-            {{effect}}();
+            {{effect.name}}();
         {% endfor %}
     }, []);
     {% endif %}
 
     {% for action in actions %}
-    {{action}}(){
+    function {{action}}(){
         //YOUR CODE GOES HERE
     }
     {% endfor %}

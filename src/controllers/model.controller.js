@@ -9,13 +9,13 @@ async function save(req, res, next){
 
 }
 
-async function generateComponent(req, res, next){
-    const success = await modelService.generateComponent(req.body, "../newfolder/components");
-    if(success)
-        res.status(200).send("Generated component!");
-    else
-        res.status(400).send();
-}
+// async function generateComponent(req, res, next){
+//     const success = await modelService.generateComponent(req.body, "../newfolder/components");
+//     if(success)
+//         res.status(200).send("Generated component!");
+//     else
+//         res.status(400).send();
+// }
 
 async function generateProject(req, res, next){
     const success = await modelService.generateProject(req.body.model, req.body.structure);
@@ -23,4 +23,4 @@ async function generateProject(req, res, next){
     res.status(200).send("generated");
 }
 
-module.exports = { getAllForUser, save, generateComponent, generateProject };
+module.exports = { getAllForUser, save, generateProject };

@@ -7,21 +7,11 @@ nunjucks.configure('services/templates', { autoescape: false });
 
 const fs = require('fs');
 
+const path = require('path');
+
+//METHODS
 async function save(model){
     return await modelRepository.save(collectionName, model);
-}
-
-async function generateComponent(component, output_dir){
-    nunjucks.configure('services/templates', { autoescape: false });
-    retval = nunjucks.render('component.template', component, (err, res) => {
-        if(!err){
-            // console.log(res);
-            fs.writeFile(`${output_dir}/${component.name}.jsx`, res, (err) => {
-                return false;
-            })
-        }
-    });
-    return true;
 }
 
 
@@ -55,6 +45,10 @@ async function _generateComponents(components, pages){
 }
 
 async function _componentTemplate(component){
+    await component.children.map((child) => {
+        let relative = _calculateRelativePath(`${component.path}/${component.name}`, `${child.absolutePath}/${child.name}`);
+        child.relativePath = relative == "" ? "./" : relative.replace("\\", "/") + '/';
+    });
     retval = nunjucks.render('component.template', component, (err, res) => {
         if(!err){
             fs.writeFile(`${component.path}/${component.name}.jsx`, res, (err) => {
@@ -122,6 +116,10 @@ async function _generatePublic(path){
     })
 }
 
+function _calculateRelativePath(parentPath, childPath){
+    return path.relative(path.dirname(parentPath), path.dirname(childPath));
+}
+
 async function generateProject(model, output_dir){
     generateProjectStructure(output_dir);
     _generateComponents(model.components, model.pages);
@@ -133,4 +131,4 @@ async function generateProject(model, output_dir){
     return true;
 }
 
-module.exports = { save, generateComponent, generateProject };
+module.exports = { save, generateProject };

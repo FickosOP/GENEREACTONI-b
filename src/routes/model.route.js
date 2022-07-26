@@ -13,7 +13,7 @@ router.post('/', modelController.save);
 
 // router.delete('/:id');
 
-router.post('/component/:projectId', modelController.generateComponent);
+// router.post('/component/:projectId', modelController.generateComponent);
 
 router.post('/generate', modelController.generateProject);
 
