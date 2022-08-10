@@ -3,9 +3,9 @@ const router = express.Router();
 
 const modelController = require('../controllers/model.controller');
 
-router.get('/:userId', modelController.getAllForUser);
+router.get('/user/:userId', modelController.getAllForUser);
 
-// router.get('/:id');
+router.get('/:id', modelController.getById);
 
 router.post('/', modelController.save);
 

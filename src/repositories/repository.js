@@ -24,11 +24,15 @@ async function update(coll, id, obj){
 }
 
 async function getOneByUsername(coll, username){
-    return await database.collection(coll).findOne( { username });
+    return await database.collection(coll).findOne({ username });
 }
 
 async function deleteOne(coll, id){
 
 }
 
-module.exports = {save, getAll, getOne, update, deleteOne, getOneByUsername}
+async function getAllForUserId(coll, userId){
+    return await database.collection(coll).find({userId: Number(userId)}).toArray();
+}
+
+module.exports = { save, getAll, getOne, update, deleteOne, getOneByUsername, getAllForUserId }

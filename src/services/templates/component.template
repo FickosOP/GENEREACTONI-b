@@ -6,8 +6,10 @@ import { {{effect.name}} } from '{{effect.relativePath}}';
 import {{child.name}} from '{{child.relativePath}}{{child.name}}';
 {% endfor %}
 
-function {{name}}(){
-
+function {{name}}({% if props %}props{% endif %}){
+    {% for prop in props %}
+    const {{prop}} = props.{{prop}};
+    {% endfor %}
     {% for state in states %}
     const [{{state.name}}, set{{state.name | capitalize}}] = useState({{state.default}});
     {% endfor %}
