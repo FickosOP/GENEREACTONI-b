@@ -2,7 +2,7 @@
 const modelService = require('../services/model.service');
 
 async function getAllForUser(req, res, next){
-    const models = await modelService.getAllForUser(req.params.userId);
+    const models = await modelService.getAllForUser(req.user.user_id);
     res.status(200).send(models);
 }
 

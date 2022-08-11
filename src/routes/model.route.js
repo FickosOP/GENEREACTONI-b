@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+const auth = require("../middleware/auth");
+
 const modelController = require('../controllers/model.controller');
 
-router.get('/user/:userId', modelController.getAllForUser);
+router.get('/user/:userId', auth, modelController.getAllForUser);
 
 router.get('/:id', modelController.getById);
 

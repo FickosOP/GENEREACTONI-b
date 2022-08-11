@@ -8,7 +8,8 @@ client.connect();
 const database = client.db(DB_NAME);
 
 async function save(coll, obj){
-    return await database.collection(coll).insertOne(obj);
+    const created =  await database.collection(coll).insertOne(obj);
+    return {...created, ...obj};
 }
 
 async function getAll(coll){
