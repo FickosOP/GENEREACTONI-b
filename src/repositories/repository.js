@@ -33,7 +33,7 @@ async function deleteOne(coll, id){
 }
 
 async function getAllForUserId(coll, userId){
-    return await database.collection(coll).find({userId: Number(userId)}).toArray();
+    return await database.collection(coll).find({userId: userId}).toArray();
 }
 
 module.exports = { save, getAll, getOne, update, deleteOne, getOneByUsername, getAllForUserId }

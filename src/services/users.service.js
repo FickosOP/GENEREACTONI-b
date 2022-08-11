@@ -35,7 +35,7 @@ async function save(user){
 
 async function login(loginDto){
     const user = await userRepository.getOneByUsername(collectionName, loginDto.username);
-    if(user.password != loginDto.password)
+    if(user?.password != loginDto.password)
         return;
     return user;
 }

@@ -13,7 +13,6 @@ const DOMParser = require('xmldom').DOMParser;
 
 //METHODS
 async function save(model){
-    model.userId = 1; //from jwt
     return await modelRepository.save(collectionName, model);
 }
 

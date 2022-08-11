@@ -7,7 +7,7 @@ async function getAllForUser(req, res, next){
 }
 
 async function save(req, res, next){
-    const saved = await modelService.save(req.body);
+    const saved = await modelService.save({...req.body, userId: req.user.user_id});
     res.status(200).send(saved);
 }
 

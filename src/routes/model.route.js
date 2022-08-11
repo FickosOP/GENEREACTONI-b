@@ -9,7 +9,7 @@ router.get('/user/:userId', auth, modelController.getAllForUser);
 
 router.get('/:id', modelController.getById);
 
-router.post('/', modelController.save);
+router.post('/', auth, modelController.save);
 
 // router.put('/:id');
 
