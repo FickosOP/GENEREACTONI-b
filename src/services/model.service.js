@@ -13,28 +13,47 @@ const DOMParser = require('xmldom').DOMParser;
 
 //METHODS
 async function save(model){
-    return await modelRepository.save(collectionName, model);
+    const existing = await modelRepository.modelExists(collectionName, model.userId, model.name);
+    if(!existing)
+        return await modelRepository.save(collectionName, model);
+    else
+        return await modelRepository.update(collectionName, existing._id, model);
 }
 
 
-async function generateProjectStructure(output_dir){
+async function generateProjectStructure(output_dir, level = 0){
+    if(level === 0){
+        output_dir.folder = `./output/${output_dir.folder}`;
+    }
     const folderName = output_dir.folder;
-    fs.access(folderName, (err) => {
-        if(err){
-            // console.log(`Directory ${folderName} does not exist`);
-            fs.mkdirSync(folderName);
-            // console.log(`Directory ${folderName} created!`);
-            generateProjectStructure(output_dir);
+    try{
+        fs.accessSync(folderName, fs.constants.R_OK | fs.constants.W_OK);
+        for(let sub of output_dir.subfolders){
+            sub.folder = `${folderName}/${sub.folder}`;
+            generateProjectStructure(sub, ++level);
         }
-        else{
-            // console.log(`Directory ${folderName} exists`);
-            // console.log(`Subfolders: ${output_dir.subfolders.length}`);
-            for(let sub of output_dir.subfolders){
-                sub.folder = `${folderName}/${sub.folder}`;
-                generateProjectStructure(sub);
-            }
-        }
-    })
+    }
+    catch(err){
+        fs.mkdirSync(folderName);
+        generateProjectStructure(output_dir, ++level);
+    }
+    // fs.access(folderName, (err) => {
+        
+    //     if(err){
+    //         // console.log(`Directory ${folderName} does not exist`);
+    //         fs.mkdirSync(folderName);
+    //         // console.log(`Directory ${folderName} created!`);
+    //         generateProjectStructure(output_dir, ++level);
+    //     }
+    //     else{
+    //         // console.log(`Directory ${folderName} exists`);
+    //         // console.log(`Subfolders: ${output_dir.subfolders.length}`);
+    //         for(let sub of output_dir.subfolders){
+    //         sub.folder = `${folderName}/${sub.folder}`;
+    //         generateProjectStructure(sub, ++level);
+    //     }
+    //     }
+    // });
 }
 
 async function _generateComponents(components, pages){
@@ -48,7 +67,7 @@ async function _generateComponents(components, pages){
 
 async function _componentTemplate(component){
     component.return = await dynamize(component.return);
-    await component.children.map((child) => {
+    component.children.map((child) => {
         let relative = _calculateRelativePath(`${component.path}/${component.name}`, `${child.absolutePath}/${child.name}`);
         child.relativePath = relative == "" ? "./" : relative.replace("\\", "/") + '/';
     });
@@ -161,14 +180,21 @@ async function dynamize(html){
 }
 
 async function generateProject(model, output_dir){
-    await generateProjectStructure(output_dir);
+    await generateProjectStructure(output_dir, 0);
+    console.log('Structure created');
     _generateComponents(model.components, model.pages);
+    console.log('Generated components');
     _appTemplate(output_dir.folder, model);
+    console.log('Generated App.js');
     _packageTemplate(output_dir.folder, "genereactoni");
+    console.log('Generated package.json');
     _generateServices(output_dir.folder, model.services);
+    console.log('Generated services');
     _generateUtils(output_dir.folder, model.utils);
+    console.log('Generated utils');
     _generatePublic(output_dir.folder);
-    return true;
+    console.log('Generated index.html');
+    
 }
 
 async function getAllForUser(userId){

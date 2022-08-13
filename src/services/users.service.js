@@ -35,6 +35,13 @@ async function save(user){
 
 async function login(loginDto){
     const user = await userRepository.getOneByUsername(collectionName, loginDto.username);
+    user.token = jwt.sign(
+        {user_id: user.username},
+        process.env.TOKEN_KEY,
+        {
+            expiresIn: '1h'
+        }
+    );
     if(user?.password != loginDto.password)
         return;
     return user;

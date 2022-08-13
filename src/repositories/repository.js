@@ -2,6 +2,7 @@ const { MongoClient } = require('mongodb');
 const { DB_URI, DB_NAME } = require('../config');
 
 const client = new MongoClient(DB_URI);
+const ObjectId = require('mongodb').ObjectId;
 
 client.connect();
 
@@ -21,7 +22,7 @@ async function getOne(coll, id){
 }
 
 async function update(coll, id, obj){
-
+    return await database.collection(coll).updateOne({_id: ObjectId(id)}, { $set: {...obj} });
 }
 
 async function getOneByUsername(coll, username){
@@ -36,4 +37,8 @@ async function getAllForUserId(coll, userId){
     return await database.collection(coll).find({userId: userId}).toArray();
 }
 
-module.exports = { save, getAll, getOne, update, deleteOne, getOneByUsername, getAllForUserId }
+async function modelExists(coll, userId, modelName){
+    return await database.collection(coll).findOne({userId: userId, name: modelName});
+}
+
+module.exports = { save, getAll, getOne, update, deleteOne, getOneByUsername, getAllForUserId, modelExists }
