@@ -1,5 +1,8 @@
 
+const childProcess = require('child_process');
+
 const modelService = require('../services/model.service');
+
 
 async function getAllForUser(req, res, next){
     const models = await modelService.getAllForUser(req.user.user_id);
@@ -17,8 +20,15 @@ async function getById(req, res, next){
 }
 
 async function generateProject(req, res, next){
+    console.log('PRE')
     const success = await modelService.generateProject(req.body.model, req.body.structure);
-    res.status(200).send(success);
+    console.log('Posle');
+    childProcess.execSync(`zip -r archive *`, {
+        cwd: success
+    });
+
+    res.download(success + '/archive.zip');
+    // res.status(200).send(success);
 }
 
 module.exports = { getAllForUser, save, generateProject, getById };

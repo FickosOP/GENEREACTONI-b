@@ -66,84 +66,55 @@ async function _generateComponents(components, pages){
 }
 
 async function _componentTemplate(component){
-    component.return = await dynamize(component.return);
+    // component.return = await dynamize(component.return); //UNCOMMENT WHEN GUARDS ARE IMPLEMENTED
     component.children.map((child) => {
         let relative = _calculateRelativePath(`${component.path}/${component.name}`, `${child.absolutePath}/${child.name}`);
         child.relativePath = relative == "" ? "./" : relative.replace("\\", "/") + '/';
     });
-    retval = nunjucks.render('component.template', component, (err, res) => { //dynamize html
-        if(!err){
-            fs.writeFile(`${component.path}/${component.name}.jsx`, res, (err) => {
-                return false;
-            })
-        }
-    });
+    await _generateAndWriteToFile('component.template', `./output/${component.path}/${component.name}.jsx`, component);
 }
 
 async function _appTemplate(path, pages){
-    nunjucks.render('app.template', pages, (err, res) => {
-        if(!err){
-            fs.writeFile(`${path}/src/App.js`, res, (err) => {
-                return false;
-            })
-        }
-    });
-
-    nunjucks.render('index-js.template', pages, (err, res) => {
-        if(!err){
-            fs.writeFile(`${path}/src/index.js`, res, (err) => {
-                return false;
-            })
-        }
-    });
-
-    nunjucks.render('config.template', pages, (err, res) => {
-        if(!err){
-            fs.writeFile(`${path}/src/config.js`, res, (err) => {
-                return false;
-            })
-        }
-    })
+    await _generateAndWriteToFile('app.template', `${path}/src/App.js`, pages);
+    
+    await _generateAndWriteToFile('index-js.template', `${path}/src/index.js`, pages);
+    
+    return _generateAndWriteToFile('config.template', `${path}/src/config.js`, pages);
 }
 
 async function _packageTemplate(path, name){
-    retval = nunjucks.render('package.template', {name}, (err, res) => {
-        if(!err){
-            fs.writeFile(`${path}/package.json`, res, (err) => {
-                return false;
-            })
-        }
-    })
+    return _generateAndWriteToFile('package.template', `${path}/package.json`, {name})
 }
 
 async function _generateServices(path, services){
-    retval = nunjucks.render('service.template', {services}, (err, res) => {
-        if(!err){
-            fs.writeFile(`${path}/src/services/services.js`, res, (err) => {
-                return false;
-            })
-        }
-    })
+    return _generateAndWriteToFile('service.template', `${path}/src/services/services.js`, {services});
 }
 
 async function _generateUtils(path, utils){
-    retval = nunjucks.render('util.template', {utils}, (err, res) => {
-        if(!err){
-            fs.writeFile(`${path}/src/utils/utils.js`, res, (err) => {
-                return false;
-            })
-        }
-    })
+    return _generateAndWriteToFile('util.template', `${path}/src/utils/utils.js`, {utils});
+}
+
+async function _generateAndWriteToFile(template, path, data={}){
+    return new Promise((resolve, reject) => {
+        
+        nunjucks.render(template, data, (err, res) => {
+            if(!err){
+                fs.writeFile(path, res, (err) => {
+                    if(!err){
+                        resolve();
+                    } else {
+                        reject(`Error when writing a file ${path}`);
+                    }
+                });
+            } else {
+                reject(`Error when rendering ${template}`);
+            }
+        });
+    });
 }
 
 async function _generatePublic(path){
-    retval = nunjucks.render('index-html.template', {}, (err, res) => {
-        if(!err){
-            fs.writeFile(`${path}/public/index.html`, res, (err) => {
-                return false;
-            })
-        }
-    })
+    return _generateAndWriteToFile('index-html.template', `${path}/public/index.html`);
 }
 
 function _calculateRelativePath(parentPath, childPath){
@@ -152,6 +123,9 @@ function _calculateRelativePath(parentPath, childPath){
 
 async function dynamize(html){
     //VALIDACIJE DA LI POSTOJE SVE STVARI KOJE KORISTE
+    if(!html){
+        return '<></>';
+    }
     let parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const elements = Array.from(doc.getElementsByTagName("*")); 
@@ -173,7 +147,7 @@ async function dynamize(html){
                 }
             }
         });
-        el.removeAttribute('xmlns');
+        el.removeAttribute('xmlns'); //not working
     });
     console.log(elements[0] + "");
     return elements[0] + "";
@@ -181,20 +155,20 @@ async function dynamize(html){
 
 async function generateProject(model, output_dir){
     await generateProjectStructure(output_dir, 0);
-    console.log('Structure created');
-    _generateComponents(model.components, model.pages);
-    console.log('Generated components');
-    _appTemplate(output_dir.folder, model);
-    console.log('Generated App.js');
-    _packageTemplate(output_dir.folder, "genereactoni");
-    console.log('Generated package.json');
-    _generateServices(output_dir.folder, model.services);
-    console.log('Generated services');
-    _generateUtils(output_dir.folder, model.utils);
-    console.log('Generated utils');
-    _generatePublic(output_dir.folder);
-    console.log('Generated index.html');
-    
+
+    await _generateComponents(model.components, model.pages);
+
+    await _appTemplate(output_dir.folder, model);
+
+    await _packageTemplate(output_dir.folder, "genereactoni");
+
+    await _generateServices(output_dir.folder, model.services);
+
+    await _generateUtils(output_dir.folder, model.utils);
+
+    await _generatePublic(output_dir.folder);
+
+    return output_dir.folder;
 }
 
 async function getAllForUser(userId){
