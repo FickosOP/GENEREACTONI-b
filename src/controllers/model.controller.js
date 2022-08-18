@@ -44,4 +44,9 @@ function cleanup(dir){
     });
 }
 
-module.exports = { getAllForUser, save, generateProject, getById };
+async function deleteProject(req, res, next){
+    const success = await modelService.deleteProject(req.params.id);
+    res.status(200).send(success);
+} 
+
+module.exports = { getAllForUser, save, generateProject, getById, deleteProject };

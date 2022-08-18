@@ -13,7 +13,7 @@ router.post('/', auth, modelController.save);
 
 // router.put('/:id');
 
-// router.delete('/:id');
+router.delete('/:id', auth, modelController.deleteProject);
 
 // router.post('/component/:projectId', modelController.generateComponent);
 

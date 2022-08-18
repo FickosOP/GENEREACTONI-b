@@ -20,6 +20,11 @@ async function save(model){
         return await modelRepository.update(collectionName, existing._id, model);
 }
 
+async function deleteProject(modelId){
+    const deleted = await modelRepository.deleteOne(collectionName, modelId);
+    console.log(deleted);
+    return deleted;
+}
 
 async function generateProjectStructure(output_dir, level = 0){
     if(level === 0){
@@ -184,4 +189,4 @@ async function getById(id){
     return modelRepository.getOne(collectionName, id);
 }
 
-module.exports = { save, generateProject, getAllForUser, getById };
+module.exports = { save, generateProject, getAllForUser, getById, deleteProject };

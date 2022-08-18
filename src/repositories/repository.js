@@ -30,7 +30,7 @@ async function getOneByUsername(coll, username){
 }
 
 async function deleteOne(coll, id){
-
+    return await database.collection(coll).deleteOne({_id: ObjectId(id)});
 }
 
 async function getAllForUserId(coll, userId){
