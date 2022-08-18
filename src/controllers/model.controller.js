@@ -3,6 +3,7 @@ const childProcess = require('child_process');
 
 const modelService = require('../services/model.service');
 
+const fsExtra = require('fs-extra');
 
 async function getAllForUser(req, res, next){
     const models = await modelService.getAllForUser(req.user.user_id);
@@ -20,15 +21,27 @@ async function getById(req, res, next){
 }
 
 async function generateProject(req, res, next){
-    console.log('PRE')
     const success = await modelService.generateProject(req.body.model, req.body.structure);
-    console.log('Posle');
     childProcess.execSync(`zip -r archive *`, {
         cwd: success
     });
+    console.log(success);
+    downloadZip(res, success)
+    .then(
+        () => cleanup(success)
+    );
+}
 
-    res.download(success + '/archive.zip');
-    // res.status(200).send(success);
+function downloadZip(res, success){
+    return (Promise.resolve(res.download(success + '/archive.zip')));
+}
+
+function cleanup(dir){
+    console.log('CLEANUP');
+    fsExtra.emptyDir(dir, (err) => {
+        if(err)
+            throw err;
+    });
 }
 
 module.exports = { getAllForUser, save, generateProject, getById };

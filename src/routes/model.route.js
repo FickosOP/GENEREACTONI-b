@@ -17,6 +17,9 @@ router.post('/', auth, modelController.save);
 
 // router.post('/component/:projectId', modelController.generateComponent);
 
+
 router.post('/generate', modelController.generateProject);
+
+
 
 module.exports = router;
