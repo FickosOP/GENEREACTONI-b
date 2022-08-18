@@ -66,10 +66,15 @@ async function _generateComponents(components, pages){
 }
 
 async function _componentTemplate(component){
-    // component.return = await dynamize(component.return); //UNCOMMENT WHEN GUARDS ARE IMPLEMENTED
-    component.children.map((child) => {
+    component.return = await dynamize(component.return); //UNCOMMENT WHEN GUARDS ARE IMPLEMENTED
+    //if !component.states[i].default : '' : component.states[i].default
+    component.children?.map((child) => {
         let relative = _calculateRelativePath(`${component.path}/${component.name}`, `${child.absolutePath}/${child.name}`);
         child.relativePath = relative == "" ? "./" : relative.replace("\\", "/") + '/';
+    });
+    component.effects?.map((eff) => {
+        let relative = _calculateRelativePath(`${component.path}/${component.name}`, `${eff.absolutePath}/`);
+        eff.relativePath = relative == "" ? "./" : relative.replace("\\", "/") + '/';
     });
     await _generateAndWriteToFile('component.template', `./output/${component.path}/${component.name}.jsx`, component);
 }
